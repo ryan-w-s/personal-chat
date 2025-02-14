@@ -1,0 +1,21 @@
+---
+description: General Rules for the project
+globs: *.ts, *.js, *.svelte
+---
+This is an AI chat app meant to be run by individuals to access free models.
+
+Notable architecture and components:
+
+* SvelteKit app as the server
+* OpenRouter for the AI endpoint, which follows openai API spec
+* 1Password for secrets
+* Secrets stored in .env
+* TypeScript
+* Tailwind CSS for UI components
+* SQLite as the database
+* Drizzle as ORM
+* Vite for bundling and running
+* Yarn for dependency management
+
+Uses ESLint and Prettier for linting and formatting.
+Do not use unneccesary semicolons in TypeScript code.
