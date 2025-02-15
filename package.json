@@ -16,7 +16,9 @@
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build"
+		"build-storybook": "storybook build",
+		"secrets": "op inject -i template.env -o secrets.env",
+		"clean:secrets": "rimraf secrets.env"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^3.2.4",
@@ -42,6 +44,7 @@
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.11",
+		"rimraf": "^6.0.1",
 		"storybook": "^8.5.4",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
