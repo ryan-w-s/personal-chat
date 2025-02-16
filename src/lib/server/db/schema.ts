@@ -4,8 +4,12 @@ import { sql } from 'drizzle-orm'
 export const conversations = sqliteTable('conversations', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	title: text('title').notNull(),
-	createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
-	updatedAt: text('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull()
+	createdAt: text('created_at')
+		.default(sql`CURRENT_TIMESTAMP`)
+		.notNull(),
+	updatedAt: text('updated_at')
+		.default(sql`CURRENT_TIMESTAMP`)
+		.notNull()
 })
 
 export const messages = sqliteTable('messages', {
@@ -15,5 +19,7 @@ export const messages = sqliteTable('messages', {
 		.notNull(),
 	role: text('role', { enum: ['user', 'assistant', 'system'] }).notNull(),
 	content: text('content').notNull(),
-	createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull()
+	createdAt: text('created_at')
+		.default(sql`CURRENT_TIMESTAMP`)
+		.notNull()
 })
