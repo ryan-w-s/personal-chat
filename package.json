@@ -17,8 +17,8 @@
 		"db:studio": "drizzle-kit studio",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
-		"secrets": "op inject -i template.env -o secrets.env",
-		"clean:secrets": "rimraf secrets.env"
+		"secrets": "op inject -i template.env -o .env",
+		"clean:secrets": "rimraf secrets.env .env"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^3.2.4",
