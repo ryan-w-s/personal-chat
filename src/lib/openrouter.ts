@@ -15,26 +15,25 @@ export type ChatMessage = {
 // OpenRouter follows OpenAI's API spec but with a different base URL
 const client = new OpenAI({
 	baseURL: 'https://openrouter.ai/api/v1',
-	apiKey: env.OPENROUTER_API_KEY,
+	apiKey: env.OPENROUTER_API_KEY
 })
 
 export type ModelInfo = {
 	id: string
 	name: string
-	maxTokens: number
+	maxInput: number
+	maxOutput: number
+	visual: boolean
 }
 
 // List of available models we want to support
 export const AVAILABLE_MODELS: ModelInfo[] = [
 	{
-		id: 'mistralai/mistral-7b-instruct',
-		name: 'Mistral 7B',
-		maxTokens: 4096
-	},
-	{
-		id: 'anthropic/claude-2',
-		name: 'Claude 2',
-		maxTokens: 100000
+		id: 'google/gemini-2.0-flash-exp:free',
+		name: 'Gemini Flash 2.0',
+		maxInput: 1048576, // ~1M tokens context window
+		maxOutput: 8192, // 8K tokens max output
+		visual: true // Model supports vision
 	}
 ]
 
