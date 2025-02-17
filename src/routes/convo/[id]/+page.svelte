@@ -86,7 +86,7 @@
 				required
 				on:keydown={handleKeydown}
 				disabled={isSubmitting}
-			/>
+			></textarea>
 		</div>
 		<button
 			type="submit"

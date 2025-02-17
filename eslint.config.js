@@ -16,8 +16,8 @@ export default ts.config(
 	...svelte.configs['flat/prettier'],
 	{
 		rules: {
-			semi: ['error', 'never'],
-			'@typescript-eslint/semi': ['error', 'never']
+			semi: ['error', 'never']
+			// '@typescript-eslint/semi': ['error', 'never']
 		},
 		languageOptions: {
 			globals: {

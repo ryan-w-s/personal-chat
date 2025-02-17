@@ -16,7 +16,7 @@
 				class="w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
 				placeholder="What would you like to chat about?"
 				required
-			/>
+			></textarea>
 		</div>
 
 		<button
