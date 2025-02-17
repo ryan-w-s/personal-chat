@@ -1,0 +1,99 @@
+<!-- Chat interface -->
+<script lang="ts">
+	import { enhance } from '$app/forms'
+	import type { PageData } from './$types'
+
+	export let data: PageData
+
+	let messageInput: HTMLTextAreaElement
+	let chatContainer: HTMLDivElement
+	let messageCount = 0
+	let isSubmitting = false
+
+	$: ({ conversation } = data)
+
+	// Only auto-scroll when message count changes (new messages added)
+	$: if (conversation.messages.length !== messageCount) {
+		messageCount = conversation.messages.length
+		scrollToBottom()
+	}
+
+	function scrollToBottom() {
+		setTimeout(() => {
+			if (chatContainer) {
+				chatContainer.scrollTop = chatContainer.scrollHeight
+			}
+		}, 0)
+	}
+
+	// Handle form submission
+	function handleSubmit() {
+		if (messageInput) {
+			messageInput.value = ''
+		}
+	}
+
+	// Handle Ctrl+Enter to submit
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+			const form = (event.target as HTMLElement).closest('form')
+			if (form) form.requestSubmit()
+		}
+	}
+</script>
+
+<div class="container mx-auto flex h-screen max-w-4xl flex-col p-4">
+	<header class="mb-4">
+		<h1 class="text-xl font-bold">{conversation.title}</h1>
+	</header>
+
+	<!-- Messages container with auto-scroll -->
+	<div bind:this={chatContainer} class="flex-1 space-y-4 overflow-y-auto rounded-lg bg-gray-50 p-4">
+		{#each conversation.messages as message}
+			<div class="flex {message.role === 'assistant' ? 'justify-start' : 'justify-end'}">
+				<div
+					class="max-w-[80%] rounded-lg p-3 {message.role === 'assistant'
+						? 'bg-white'
+						: 'bg-blue-500 text-white'}"
+				>
+					<p class="whitespace-pre-wrap">{message.content}</p>
+				</div>
+			</div>
+		{/each}
+	</div>
+
+	<!-- Message input form -->
+	<form
+		method="POST"
+		action="?/sendMessage"
+		use:enhance={() => {
+			isSubmitting = true
+			return ({ update }) => {
+				update({ reset: false })
+				handleSubmit()
+				isSubmitting = false
+			}
+		}}
+		class="mt-4 flex gap-2"
+	>
+		<div class="flex-1">
+			<textarea
+				bind:this={messageInput}
+				name="message"
+				rows="3"
+				class="w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
+				placeholder="Type your message... (Ctrl+Enter to send)"
+				required
+				on:keydown={handleKeydown}
+				disabled={isSubmitting}
+			/>
+		</div>
+		<button
+			type="submit"
+			class="self-end rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none disabled:opacity-50"
+			disabled={isSubmitting}
+		>
+			{isSubmitting ? 'Sending...' : 'Send'}
+		</button>
+	</form>
+</div>
