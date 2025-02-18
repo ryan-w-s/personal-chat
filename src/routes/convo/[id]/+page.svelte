@@ -2,6 +2,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
 	import type { PageData } from './$types'
+	import { marked } from 'marked'
+	import { browser } from '$app/environment'
+	import createDOMPurify from 'dompurify'
 
 	export let data: PageData
 
@@ -9,6 +12,12 @@
 	let chatContainer: HTMLDivElement
 	let messageCount = 0
 	let isSubmitting = false
+	let DOMPurify: typeof createDOMPurify
+
+	// Initialize DOMPurify only in browser
+	if (browser) {
+		DOMPurify = createDOMPurify(window)
+	}
 
 	$: ({ conversation } = data)
 
@@ -40,6 +49,15 @@
 			if (form) form.requestSubmit()
 		}
 	}
+
+	// Safely render markdown content
+	function renderMarkdown(content: string): string {
+		const rawHtml = marked.parse(content, {
+			breaks: true,
+			async: false
+		}) as string
+		return browser ? DOMPurify.sanitize(rawHtml) : rawHtml
+	}
 </script>
 
 <div
@@ -57,11 +75,14 @@
 		{#each conversation.messages as message}
 			<div class="flex {message.role === 'assistant' ? 'justify-start' : 'justify-end'}">
 				<div
-					class="max-w-[80%] rounded-lg p-3 {message.role === 'assistant'
+					class="prose prose-sm dark:prose-invert max-w-[80%] rounded-lg p-3 {message.role ===
+					'assistant'
 						? 'bg-white dark:bg-gray-700'
 						: 'bg-blue-500 text-white'}"
 				>
-					<p class="whitespace-pre-wrap">{message.content}</p>
+					<!-- Content is sanitized by DOMPurify before rendering -->
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+					{@html renderMarkdown(message.content)}
 				</div>
 			</div>
 		{/each}
