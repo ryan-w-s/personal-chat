@@ -42,13 +42,18 @@
 	}
 </script>
 
-<div class="container mx-auto flex h-[calc(100vh-4rem)] max-w-4xl flex-col p-4 text-gray-900 dark:text-gray-100">
+<div
+	class="container mx-auto flex h-[calc(100vh-4rem)] max-w-4xl flex-col p-4 text-gray-900 dark:text-gray-100"
+>
 	<header class="mb-4">
 		<h1 class="text-xl font-bold">{conversation.title}</h1>
 	</header>
 
 	<!-- Messages container with auto-scroll -->
-	<div bind:this={chatContainer} class="flex-1 space-y-4 overflow-y-auto rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+	<div
+		bind:this={chatContainer}
+		class="flex-1 space-y-4 overflow-y-auto rounded-lg bg-gray-50 p-4 dark:bg-gray-800"
+	>
 		{#each conversation.messages as message}
 			<div class="flex {message.role === 'assistant' ? 'justify-start' : 'justify-end'}">
 				<div

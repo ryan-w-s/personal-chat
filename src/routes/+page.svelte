@@ -25,7 +25,9 @@
 		</a>
 
 		{#if conversations.length === 0}
-			<div class="flex items-center justify-center rounded-lg bg-gray-50 p-8 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+			<div
+				class="flex items-center justify-center rounded-lg bg-gray-50 p-8 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+			>
 				No conversations yet
 			</div>
 		{:else}
@@ -36,7 +38,9 @@
 				>
 					<div class="flex items-center justify-between">
 						<h2 class="font-medium">{conversation.title}</h2>
-						<span class="text-sm text-gray-500 dark:text-gray-400">{formatDate(conversation.updatedAt)}</span>
+						<span class="text-sm text-gray-500 dark:text-gray-400"
+							>{formatDate(conversation.updatedAt)}</span
+						>
 					</div>
 				</a>
 			{/each}

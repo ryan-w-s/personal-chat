@@ -5,7 +5,7 @@
 
 <div class="flex min-h-screen flex-col bg-white dark:bg-gray-900">
 	<header class="bg-gray-800 p-4 text-white">
-		<nav class="container mx-auto max-w-4xl flex items-center">
+		<nav class="container mx-auto flex max-w-4xl items-center">
 			<a href="/" class="text-xl font-bold">✨</a>
 			<div class="ml-4 space-x-4">
 				<a href="/" class="hover:text-gray-300">Conversations</a>
