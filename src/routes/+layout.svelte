@@ -3,7 +3,7 @@
 	let { children } = $props()
 </script>
 
-<div class="flex min-h-screen flex-col">
+<div class="flex min-h-screen flex-col bg-white dark:bg-gray-900">
 	<header class="bg-gray-800 p-4 text-white">
 		<nav class="container mx-auto max-w-4xl flex items-center">
 			<a href="/" class="text-xl font-bold">✨</a>
