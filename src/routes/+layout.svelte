@@ -3,4 +3,18 @@
 	let { children } = $props()
 </script>
 
-{@render children()}
+<div class="flex min-h-screen flex-col">
+	<header class="bg-gray-800 p-4 text-white">
+		<nav class="container mx-auto flex items-center">
+			<a href="/" class="text-xl font-bold">✨</a>
+			<div class="ml-4 space-x-4">
+				<a href="/" class="hover:text-gray-300">Conversations</a>
+				<a href="/new" class="hover:text-gray-300">New Chat</a>
+			</div>
+		</nav>
+	</header>
+
+	<main class="flex-1">
+		{@render children()}
+	</main>
+</div>
