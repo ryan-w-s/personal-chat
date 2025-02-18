@@ -42,7 +42,7 @@
 	}
 </script>
 
-<div class="container mx-auto flex h-screen max-w-4xl flex-col p-4 text-gray-900 dark:text-gray-100">
+<div class="container mx-auto flex h-[calc(100vh-4rem)] max-w-4xl flex-col p-4 text-gray-900 dark:text-gray-100">
 	<header class="mb-4">
 		<h1 class="text-xl font-bold">{conversation.title}</h1>
 	</header>
