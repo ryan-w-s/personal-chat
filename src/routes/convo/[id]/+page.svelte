@@ -54,7 +54,9 @@
 	function renderMarkdown(content: string): string {
 		const rawHtml = marked.parse(content, {
 			breaks: true,
-			async: false
+			async: false,
+			gfm: true,
+			pedantic: false
 		}) as string
 		return browser ? DOMPurify.sanitize(rawHtml) : rawHtml
 	}
@@ -75,7 +77,7 @@
 		{#each conversation.messages as message}
 			<div class="flex {message.role === 'assistant' ? 'justify-start' : 'justify-end'}">
 				<div
-					class="prose prose-sm dark:prose-invert max-w-[80%] rounded-lg p-3 {message.role ===
+					class="prose prose-sm dark:prose-invert max-w-[100%] rounded-lg p-3 [&>ol]:list-decimal [&>ul]:list-disc [&>ol]:ml-4 [&>ul]:ml-4 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 {message.role ===
 					'assistant'
 						? 'bg-white dark:bg-gray-700'
 						: 'bg-blue-500 text-white'}"
