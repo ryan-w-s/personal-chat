@@ -77,7 +77,7 @@
 		{#each conversation.messages as message}
 			<div class="flex {message.role === 'assistant' ? 'justify-start' : 'justify-end'}">
 				<div
-					class="prose prose-sm dark:prose-invert max-w-[100%] rounded-lg p-3 [&>ol]:list-decimal [&>ul]:list-disc [&>ol]:ml-4 [&>ul]:ml-4 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 {message.role ===
+					class="prose prose-sm dark:prose-invert max-w-[100%] rounded-lg p-3 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&>ol]:ml-4 [&>ol]:list-decimal [&>ul]:ml-4 [&>ul]:list-disc {message.role ===
 					'assistant'
 						? 'bg-white dark:bg-gray-700'
 						: 'bg-blue-500 text-white'}"

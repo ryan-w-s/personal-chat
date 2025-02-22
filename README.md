@@ -62,4 +62,3 @@ yarn db:migrate # safer option
 
 yarn db:studio # to view the database
 ```
-
