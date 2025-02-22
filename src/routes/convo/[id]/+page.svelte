@@ -5,6 +5,15 @@
 	import { marked } from 'marked'
 	import { browser } from '$app/environment'
 	import createDOMPurify from 'dompurify'
+	// @ts-ignore
+	import Prism from 'prismjs'
+	import 'prismjs/themes/prism-tomorrow.css'
+	import 'prismjs/components/prism-typescript'
+	import 'prismjs/components/prism-javascript'
+	import 'prismjs/components/prism-css'
+	import 'prismjs/components/prism-json'
+	import 'prismjs/components/prism-bash'
+	import 'prismjs/components/prism-markdown'
 
 	export let data: PageData
 
@@ -17,6 +26,26 @@
 	// Initialize DOMPurify only in browser
 	if (browser) {
 		DOMPurify = createDOMPurify(window)
+	}
+
+	// Configure marked
+	marked.setOptions({
+		breaks: true,
+		gfm: true,
+		pedantic: false
+	})
+
+	// Safely render markdown content with syntax highlighting
+	function renderMarkdown(content: string): string {
+		const rawHtml = marked.parse(content, { async: false }) as string
+		// Apply Prism highlighting to code blocks after parsing
+		const html = browser ? DOMPurify.sanitize(rawHtml) : rawHtml
+		if (browser) {
+			setTimeout(() => {
+				Prism.highlightAll()
+			}, 0)
+		}
+		return html
 	}
 
 	$: ({ conversation } = data)
@@ -48,17 +77,6 @@
 			const form = (event.target as HTMLElement).closest('form')
 			if (form) form.requestSubmit()
 		}
-	}
-
-	// Safely render markdown content
-	function renderMarkdown(content: string): string {
-		const rawHtml = marked.parse(content, {
-			breaks: true,
-			async: false,
-			gfm: true,
-			pedantic: false
-		}) as string
-		return browser ? DOMPurify.sanitize(rawHtml) : rawHtml
 	}
 </script>
 
