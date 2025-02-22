@@ -7,7 +7,7 @@
 	import createDOMPurify from 'dompurify'
 	// @ts-ignore
 	import Prism from 'prismjs'
-	import 'prismjs/themes/prism-tomorrow.css'
+	import 'prismjs/themes/prism-okaidia.css'
 	import 'prismjs/components.js'
 
 	export let data: PageData
