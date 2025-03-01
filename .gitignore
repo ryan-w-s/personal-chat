@@ -26,5 +26,5 @@ vite.config.ts.timestamp-*
 # SQLite
 *.db
 
-# Prism
-/prismjs/components/*
+# Generated files
+/static/prismjs/components/
