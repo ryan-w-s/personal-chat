@@ -12,9 +12,9 @@
 	import 'prismjs/plugins/show-language/prism-show-language'
 	import 'prismjs/plugins/match-braces/prism-match-braces'
 	import 'prismjs/plugins/autolinker/prism-autolinker'
+	import 'prismjs/plugins/autoloader/prism-autoloader'
 	import 'prismjs/themes/prism-okaidia.css'
-	import 'prismjs/components/prism-python'
-	import 'prismjs/components/prism-haskell'
+	// No need to manually import language components when using autoloader
 	// Prism CSS and other plugins are loaded by vite-plugin-prismjs
 
 	export let data: PageData
@@ -30,6 +30,12 @@
 		DOMPurify = createDOMPurify(window)
 	}
 
+	// Configure Prism autoloader if in browser
+	if (browser && Prism.plugins.autoloader) {
+		// Configure the autoloader to use the copied components
+		Prism.plugins.autoloader.languages_path = '/prismjs/components/'
+	}
+
 	// Configure marked
 	marked.setOptions({
 		breaks: true,
@@ -39,9 +45,15 @@
 
 	// Function to highlight code with Prism
 	function highlightCode(code: string, lang: string): string {
-		// Only attempt to highlight if we have a language
-		if (lang && Prism.languages[lang]) {
-			return Prism.highlight(code, Prism.languages[lang], lang)
+		// With autoloader, we don't need to check if the language is loaded
+		// The autoloader will handle loading the language definition if needed
+		if (lang) {
+			try {
+				return Prism.highlight(code, Prism.languages[lang] || {}, lang)
+			} catch (e) {
+				console.warn(`Failed to highlight ${lang} code:`, e)
+				return code
+			}
 		}
 		return code
 	}
@@ -64,10 +76,11 @@
 		if (browser) {
 			// Use a slightly longer timeout to ensure DOM is ready
 			setTimeout(() => {
-				// Find all code blocks and apply syntax highlighting manually if needed
+				// Find all code blocks and apply syntax highlighting
 				const codeBlocks = document.querySelectorAll('pre code[class*="language-"]')
 				codeBlocks.forEach((block) => {
-					// Prism will automatically detect the language from the class
+					// The autoloader will automatically load the required language
+					// based on the class name (language-xxx)
 					Prism.highlightElement(block)
 				})
 				
