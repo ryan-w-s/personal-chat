@@ -55,6 +55,7 @@
 		"drizzle-orm": "^0.38.4",
 		"marked": "^15.0.7",
 		"openai": "^4.85.1",
-		"prismjs": "^1.29.0"
+		"prismjs": "^1.29.0",
+		"vite-plugin-prismjs": "^0.0.11"
 	}
 }
