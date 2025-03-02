@@ -170,24 +170,24 @@
 		}}
 		class="mt-4 flex gap-2"
 	>
-		<div class="flex-1">
+		<div class="flex flex-1 items-stretch">
 			<textarea
 				bind:this={messageInput}
 				name="message"
 				rows="3"
-				class="w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+				class="w-full rounded-l-lg border border-gray-300 bg-white p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
 				placeholder="Type your message... (Ctrl+Enter to send)"
 				required
 				on:keydown={handleKeydown}
 				disabled={isSubmitting}
 			></textarea>
+			<button
+				type="submit"
+				class="rounded-r-lg border-y border-r border-gray-300 bg-blue-700 px-5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none disabled:opacity-50 dark:border-gray-600 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+				disabled={isSubmitting}
+			>
+				{isSubmitting ? 'Sending...' : 'Send'}
+			</button>
 		</div>
-		<button
-			type="submit"
-			class="self-end rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-			disabled={isSubmitting}
-		>
-			{isSubmitting ? 'Sending...' : 'Send'}
-		</button>
 	</form>
 </div>
