@@ -84,44 +84,6 @@
 					Prism.highlightElement(block)
 				})
 
-				// Configure Prism toolbar with copy button
-				if (Prism.plugins.toolbar) {
-					// Register copy-to-clipboard button (this should be handled by the plugin)
-					Prism.plugins.toolbar.registerButton(
-						'copy-to-clipboard',
-						function (env: { code?: string; element?: HTMLElement }) {
-							const linkCopy = document.createElement('button')
-							linkCopy.textContent = 'Copy'
-
-							linkCopy.addEventListener('click', function () {
-								if (env.code) {
-									navigator.clipboard.writeText(env.code).then(() => {
-										linkCopy.textContent = 'Copied!'
-										setTimeout(() => {
-											linkCopy.textContent = 'Copy'
-										}, 2000)
-									})
-								}
-							})
-
-							return linkCopy
-						}
-					)
-
-					// Register select code button
-					Prism.plugins.toolbar.registerButton('select-code', {
-						text: 'Select code',
-						onClick: (env: { element?: HTMLElement }) => {
-							if (env.element) {
-								const range = document.createRange()
-								range.selectNode(env.element)
-								window.getSelection()?.removeAllRanges()
-								window.getSelection()?.addRange(range)
-							}
-						}
-					})
-				}
-
 				// Enable match braces
 				if (Prism.plugins.matchBraces) {
 					Prism.plugins.matchBraces.init(Prism)
@@ -167,7 +129,7 @@
 </script>
 
 <div
-	class="container mx-auto flex h-[calc(100vh-4rem)] max-w-4xl flex-col p-4 text-gray-900 dark:text-gray-100"
+	class="container mx-auto flex h-[calc(100vh-4rem)] max-w-6xl flex-col p-4 text-gray-900 dark:text-gray-100"
 >
 	<header class="mb-4">
 		<h1 class="text-xl font-bold">{conversation.title}</h1>
