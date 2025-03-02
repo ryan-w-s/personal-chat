@@ -66,13 +66,13 @@
 			gfm: true,
 			pedantic: false
 		})
-		
+
 		// Use marked-highlight extension if needed in the future
-		
+
 		const rawHtml = marked.parse(content, { async: false }) as string
 		// Apply Prism highlighting to code blocks after parsing
 		const html = browser ? DOMPurify.sanitize(rawHtml) : rawHtml
-		
+
 		if (browser) {
 			// Use a slightly longer timeout to ensure DOM is ready
 			setTimeout(() => {
@@ -83,28 +83,31 @@
 					// based on the class name (language-xxx)
 					Prism.highlightElement(block)
 				})
-				
+
 				// Configure Prism toolbar with copy button
 				if (Prism.plugins.toolbar) {
 					// Register copy-to-clipboard button (this should be handled by the plugin)
-					Prism.plugins.toolbar.registerButton('copy-to-clipboard', function(env: { code?: string, element?: HTMLElement }) {
-						const linkCopy = document.createElement('button')
-						linkCopy.textContent = 'Copy'
-						
-						linkCopy.addEventListener('click', function() {
-							if (env.code) {
-								navigator.clipboard.writeText(env.code).then(() => {
-									linkCopy.textContent = 'Copied!'
-									setTimeout(() => {
-										linkCopy.textContent = 'Copy'
-									}, 2000)
-								})
-							}
-						})
-						
-						return linkCopy
-					})
-					
+					Prism.plugins.toolbar.registerButton(
+						'copy-to-clipboard',
+						function (env: { code?: string; element?: HTMLElement }) {
+							const linkCopy = document.createElement('button')
+							linkCopy.textContent = 'Copy'
+
+							linkCopy.addEventListener('click', function () {
+								if (env.code) {
+									navigator.clipboard.writeText(env.code).then(() => {
+										linkCopy.textContent = 'Copied!'
+										setTimeout(() => {
+											linkCopy.textContent = 'Copy'
+										}, 2000)
+									})
+								}
+							})
+
+							return linkCopy
+						}
+					)
+
 					// Register select code button
 					Prism.plugins.toolbar.registerButton('select-code', {
 						text: 'Select code',
@@ -178,7 +181,7 @@
 		{#each conversation.messages as message}
 			<div class="flex {message.role === 'assistant' ? 'justify-start' : 'justify-end'}">
 				<div
-					class="prose prose-sm dark:prose-invert max-w-[100%] rounded-lg p-3 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&>ol]:ml-4 [&>ol]:list-decimal [&>ul]:ml-4 [&>ul]:list-disc [&_pre]:!bg-gray-800 [&_code]:!bg-gray-800 dark:[&_pre]:!bg-gray-900 dark:[&_code]:!bg-gray-900 {message.role ===
+					class="prose prose-sm dark:prose-invert max-w-[100%] rounded-lg p-3 [&_code]:!bg-gray-800 dark:[&_code]:!bg-gray-900 [&_pre]:!bg-gray-800 dark:[&_pre]:!bg-gray-900 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&>ol]:ml-4 [&>ol]:list-decimal [&>ul]:ml-4 [&>ul]:list-disc {message.role ===
 					'assistant'
 						? 'bg-white dark:bg-gray-700'
 						: 'bg-blue-500 text-white'}"

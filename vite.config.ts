@@ -12,20 +12,17 @@ function copyPrismComponents() {
 		buildStart() {
 			const componentsDir = resolve('node_modules/prismjs/components')
 			const targetDir = resolve('static/prismjs/components')
-			
+
 			// Create target directory if it doesn't exist
 			if (!fs.existsSync(targetDir)) {
 				fs.mkdirSync(targetDir, { recursive: true })
 			}
-			
+
 			// Copy all component files
 			const files = fs.readdirSync(componentsDir)
-			files.forEach(file => {
+			files.forEach((file) => {
 				if (file.startsWith('prism-') && file.endsWith('.min.js')) {
-					fs.copyFileSync(
-						resolve(componentsDir, file),
-						resolve(targetDir, file)
-					)
+					fs.copyFileSync(resolve(componentsDir, file), resolve(targetDir, file))
 				}
 			})
 		}
