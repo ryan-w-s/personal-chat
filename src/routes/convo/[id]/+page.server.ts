@@ -1,5 +1,5 @@
 import { getConversation, addMessage } from '$lib/server/db/actions'
-import { chat } from '$lib/openrouter'
+import { streamChat } from '$lib/openrouter'
 import { error, fail } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 
@@ -30,17 +30,29 @@ export const actions = {
 		const conversation = await getConversation(conversationId)
 		if (!conversation) throw error(404, 'Conversation not found')
 
-		// Get AI response using conversation history
-		const response = await chat(conversation.messages)
+		// Get AI response using streaming
+		const response = await streamChat(conversation.messages)
 
 		if (response.success) {
-			// Add AI's response
-			await addMessage(conversationId, {
+			// Create a new message for the assistant's response
+			const assistantMessage = await addMessage(conversationId, {
 				role: 'assistant',
-				content: response.message
+				content: ''
 			})
+
+			// Get the updated conversation
+			const updatedConversation = await getConversation(conversationId)
+			if (!updatedConversation) throw error(404, 'Conversation not found')
+
+			// Return the message ID for client-side streaming and the updated conversation
+			return {
+				success: true,
+				messageId: assistantMessage.id,
+				stream: true,
+				conversation: updatedConversation
+			}
 		}
 
-		return { success: true }
+		return { success: false }
 	}
 } satisfies Actions

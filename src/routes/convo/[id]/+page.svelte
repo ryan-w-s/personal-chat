@@ -24,6 +24,8 @@
 	let messageCount = 0
 	let isSubmitting = false
 	let DOMPurify: typeof createDOMPurify
+	let currentStreamingMessage: string = ''
+	let currentMessageId: number | null = null
 
 	// Initialize DOMPurify only in browser
 	if (browser) {
@@ -43,21 +45,6 @@
 		pedantic: false
 	})
 
-	// Function to highlight code with Prism
-	function highlightCode(code: string, lang: string): string {
-		// With autoloader, we don't need to check if the language is loaded
-		// The autoloader will handle loading the language definition if needed
-		if (lang) {
-			try {
-				return Prism.highlight(code, Prism.languages[lang] || {}, lang)
-			} catch (e) {
-				console.warn(`Failed to highlight ${lang} code:`, e)
-				return code
-			}
-		}
-		return code
-	}
-
 	// Safely render markdown content with syntax highlighting
 	function renderMarkdown(content: string): string {
 		// Reset marked options to default
@@ -66,8 +53,6 @@
 			gfm: true,
 			pedantic: false
 		})
-
-		// Use marked-highlight extension if needed in the future
 
 		const rawHtml = marked.parse(content, { async: false }) as string
 		// Apply Prism highlighting to code blocks after parsing
@@ -98,8 +83,8 @@
 
 	$: ({ conversation } = data)
 
-	// Only auto-scroll when message count changes (new messages added)
-	$: if (conversation.messages.length !== messageCount) {
+	// Only auto-scroll when message count changes or streaming content updates
+	$: if (conversation.messages.length !== messageCount || currentStreamingMessage) {
 		messageCount = conversation.messages.length
 		scrollToBottom()
 	}
@@ -126,6 +111,66 @@
 			if (form) form.requestSubmit()
 		}
 	}
+
+	// Handle streaming response
+	async function handleStreamingResponse(response: Response, messageId: number) {
+		const reader = response.body?.getReader()
+		if (!reader) return
+
+		currentMessageId = messageId
+		currentStreamingMessage = ''
+
+		try {
+			while (true) {
+				const { done, value } = await reader.read()
+				if (done) break
+
+				// Convert the chunk to text
+				const chunk = new TextDecoder().decode(value)
+				const lines = chunk.split('\n').filter((line) => line.trim() !== '')
+
+				for (const line of lines) {
+					if (line.startsWith('data: ')) {
+						const data = line.slice(6)
+						if (data === '[DONE]') {
+							// Update the message in the database with the complete content
+							await fetch(`/convo/${conversation.id}/message/${messageId}`, {
+								method: 'PUT',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify({ content: currentStreamingMessage })
+							})
+							// Update the message content directly in the UI
+							const messageIndex = conversation.messages.findIndex((m) => m.id === messageId)
+							if (messageIndex !== -1) {
+								conversation.messages[messageIndex] = {
+									...conversation.messages[messageIndex],
+									content: currentStreamingMessage
+								}
+								conversation.messages = [...conversation.messages]
+							}
+							break
+						}
+
+						try {
+							const parsed = JSON.parse(data)
+							if (parsed.choices[0]?.delta?.content) {
+								currentStreamingMessage += parsed.choices[0].delta.content
+								// Force a re-render
+								conversation.messages = [...conversation.messages]
+							}
+						} catch (e) {
+							console.error('Error parsing streaming data:', e)
+						}
+					}
+				}
+			}
+		} catch (error) {
+			console.error('Error reading stream:', error)
+		} finally {
+			currentMessageId = null
+			currentStreamingMessage = ''
+		}
+	}
 </script>
 
 <div
@@ -148,9 +193,14 @@
 						? 'bg-white dark:bg-gray-700'
 						: 'bg-blue-500 text-white'}"
 				>
-					<!-- Content is sanitized by DOMPurify before rendering -->
-					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					{@html renderMarkdown(message.content)}
+					{#if message.id === currentMessageId}
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+						{@html renderMarkdown(currentStreamingMessage)}
+					{:else}
+						<!-- Content is sanitized by DOMPurify before rendering -->
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+						{@html renderMarkdown(message.content)}
+					{/if}
 				</div>
 			</div>
 		{/each}
@@ -160,10 +210,24 @@
 	<form
 		method="POST"
 		action="?/sendMessage"
-		use:enhance={() => {
+		use:enhance={async () => {
 			isSubmitting = true
-			return ({ update }) => {
-				update({ reset: false })
+			return async ({ result }) => {
+				if (result.type === 'success' && result.data) {
+					const data = result.data as {
+						conversation: typeof conversation
+						messageId: number
+						stream: boolean
+					}
+					// Update the conversation data with the new message
+					conversation.messages = data.conversation.messages
+
+					if (data.stream) {
+						// Start streaming the response
+						const response = await fetch(`/convo/${conversation.id}/stream/${data.messageId}`)
+						await handleStreamingResponse(response, data.messageId)
+					}
+				}
 				handleSubmit()
 				isSubmitting = false
 			}

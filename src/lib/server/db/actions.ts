@@ -66,3 +66,7 @@ export async function getMessages(conversationId: number) {
 export async function deleteConversation(id: number) {
 	await db.delete(conversations).where(eq(conversations.id, id))
 }
+
+export async function updateMessage(messageId: number, content: string) {
+	return db.update(messages).set({ content }).where(eq(messages.id, messageId)).returning().get()
+}

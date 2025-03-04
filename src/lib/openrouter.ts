@@ -63,5 +63,31 @@ export async function chat(messages: ChatMessage[], model: string = AVAILABLE_MO
 	}
 }
 
+// Streaming chat function
+export async function streamChat(messages: ChatMessage[], model: string = AVAILABLE_MODELS[0].id) {
+	try {
+		const stream = await client.chat.completions.create({
+			model,
+			messages: messages.map((msg) => ({
+				role: msg.role,
+				content: msg.content
+			})),
+			temperature: 0.7,
+			stream: true
+		})
+
+		return {
+			success: true as const,
+			stream
+		}
+	} catch (error) {
+		console.error('Error in streamChat:', error)
+		return {
+			success: false as const,
+			error: error instanceof Error ? error.message : 'Unknown error occurred'
+		}
+	}
+}
+
 // Export the client for direct access if needed
 export { client }
